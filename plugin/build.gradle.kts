@@ -12,7 +12,7 @@ dependencies {
     // Runtime libraries are downloaded by Paper itself (see "libraries" in plugin.yml),
     // so the jar stays tiny and nothing needs to be shaded.
     compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
-    compileOnly("com.zaxxer:HikariCP:6.2.1")
+    compileOnly("com.zaxxer:HikariCP:7.1.0")
 }
 
 tasks.withType<JavaCompile> {
