@@ -34,12 +34,27 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then VERSION="${GITHUB_REF_NAME#v}"; fi
           chmod +x gradlew
           ./gradlew build -Pversion="$VERSION"
+          cd build/libs && sha256sum WebStats-*.jar > SHA256SUMS.txt
 
-      - uses: actions/upload-artifact@v4
+      # Every build (push, PR, tag, manual) publishes its jar, even if a later step fails.
+      - name: Upload plugin jar
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
         with:
-          name: WebStats-plugin
-          path: plugin/build/libs/WebStats-*.jar
+          name: WebStats-plugin-${{ github.sha }}
+          path: |
+            plugin/build/libs/WebStats-*.jar
+            plugin/build/libs/SHA256SUMS.txt
           if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload build reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-reports
+          path: plugin/build/reports
+          if-no-files-found: ignore
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -50,8 +65,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: WebStats-plugin
+          name: WebStats-plugin-${{ github.sha }}
       - uses: softprops/action-gh-release@v2
         with:
-          files: WebStats-*.jar
+          files: |
+            WebStats-*.jar
+            SHA256SUMS.txt
           generate_release_notes: true

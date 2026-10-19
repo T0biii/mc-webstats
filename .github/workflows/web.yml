@@ -42,11 +42,36 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
-      - uses: docker/build-push-action@v6
+      # Downloadable image for every build (also PRs / forks): docker load < webstats-web.tar
+      - name: Build image tarball (amd64)
+        uses: docker/build-push-action@v6
+        with:
+          context: web
+          platforms: linux/amd64
+          tags: webstats-web:${{ github.sha }}
+          outputs: type=docker,dest=${{ runner.temp }}/webstats-web.tar
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Compress image
+        run: gzip -f "${{ runner.temp }}/webstats-web.tar"
+
+      - name: Upload image artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: webstats-web-image-${{ github.sha }}
+          path: ${{ runner.temp }}/webstats-web.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build and push multi-arch image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
         with:
           context: web
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

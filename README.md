@@ -51,3 +51,11 @@ docker compose up -d
 cd web && npm install && DB_PASSWORD=... CACHE_DIR=./data/cache npm start
 cd plugin && ./gradlew build
 ```
+
+## Artefakte
+
+Jeder Build lädt seine Ergebnisse als Actions-Artifact hoch (30 Tage): die Plugin-Jar samt `SHA256SUMS.txt` und das Web-Image als `webstats-web.tar.gz` (`gunzip -c webstats-web.tar.gz | docker load`).
+
+## Lizenz
+
+MIT, siehe [LICENSE](LICENSE). Beiträge: [CONTRIBUTING.md](CONTRIBUTING.md), Sicherheit: [SECURITY.md](SECURITY.md).

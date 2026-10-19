@@ -1,0 +1,31 @@
+name: Bug melden
+description: Etwas funktioniert nicht wie erwartet
+labels: [bug]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Komponente
+      options: [Plugin, Webseite, Kopf-Bilder, Docker/Deployment, Sonstiges]
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes:
+      label: Was ist passiert?
+      description: Erwartetes vs. tatsächliches Verhalten
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes:
+      label: Schritte zum Reproduzieren
+  - type: input
+    id: versions
+    attributes:
+      label: Versionen
+      placeholder: "Paper 1.21.4 build 123, WebStats 1.0.0, Image-Tag latest"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Fehlermeldungen
+      render: shell
+      description: Bitte Passwörter und Tokens entfernen.

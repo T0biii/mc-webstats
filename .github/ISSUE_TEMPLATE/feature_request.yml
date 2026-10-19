@@ -1,0 +1,17 @@
+name: Feature vorschlagen
+description: Idee für eine neue Funktion
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Wunsch
+    validations: { required: true }
+  - type: textarea
+    id: solution
+    attributes:
+      label: Vorgeschlagene Lösung
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativen
