@@ -10,7 +10,7 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@fastify/static": "^8.0.3",
+    "@fastify/static": "^10.1.6",
     "@fontsource/press-start-2p": "^5.1.0",
     "@fontsource/vt323": "^5.1.0",
     "fastify": "^5.2.0",
