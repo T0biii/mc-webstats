@@ -1,0 +1,17 @@
+# MariaDB or MySQL. The website only needs read access (SELECT) on these tables.
+database:
+  host: localhost
+  port: 3306
+  name: webstats
+  user: webstats
+  password: change-me
+  pool-size: 4
+
+# How often stats are pushed to the database (seconds).
+update-interval-seconds: 300
+
+# Folder with the vanilla <uuid>.json stat files. "auto" = <main world>/stats
+stats-folder: auto
+
+# Server snapshots (online players / TPS) older than this are deleted.
+snapshot-retention-days: 90

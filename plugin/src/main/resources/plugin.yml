@@ -1,0 +1,18 @@
+name: WebStats
+version: '${version}'
+main: dev.webstats.WebStatsPlugin
+api-version: '1.21'
+author: Tobia
+description: Stores player and server statistics in a database for the WebStats website.
+libraries:
+  - org.mariadb.jdbc:mariadb-java-client:3.5.1
+  - com.zaxxer:HikariCP:6.2.1
+commands:
+  webstats:
+    description: WebStats admin command
+    usage: /<command> sync
+    permission: webstats.admin
+permissions:
+  webstats.admin:
+    description: Allows /webstats sync
+    default: op

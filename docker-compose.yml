@@ -1,0 +1,48 @@
+# Production-ish setup. Copy .env.example to .env and fill it in.
+#
+#   docker compose up -d                       # web only (DB lives elsewhere, e.g. next to the MC server)
+#   docker compose --profile db up -d          # also start a local MariaDB
+#   docker compose --profile tunnel up -d      # also start a Cloudflare Tunnel (no open ports needed)
+services:
+  web:
+    image: ghcr.io/${GITHUB_OWNER:-your-user}/webstats-web:latest
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-My Minecraft Server}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${DB_NAME:-webstats}
+      DB_USER: ${DB_USER:-webstats}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    volumes:
+      - head-cache:/data
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+
+  db:
+    profiles: [db]
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-webstats}
+      MARIADB_USER: ${DB_USER:-webstats}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      MARIADB_RANDOM_ROOT_PASSWORD: "1"
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      # The plugin on the MC server connects here; firewall this port to the MC host only.
+      - "${DB_PUBLISH_PORT:-3306}:3306"
+
+  cloudflared:
+    profiles: [tunnel]
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?set TUNNEL_TOKEN in .env}
+    depends_on: [web]
+
+volumes:
+  head-cache:
+  db-data:
